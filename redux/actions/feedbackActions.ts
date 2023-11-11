@@ -45,6 +45,7 @@ export const submitFeedback = (
         sizeOfPortions,
         worthOfMealOverPrice,
         comments,
+        createdDate: new Date().toDateString(),
       };
 
       feedbacks.push(newFeedback);

@@ -1,5 +1,5 @@
 import { View, Text, FlatList, RefreshControl } from "react-native";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { AppHeader } from "../components/AppHeader";
 import { useDispatch } from "react-redux";
 import { useAppSelector } from "../redux/store";
@@ -8,6 +8,7 @@ import { ActivityIndicator, Button } from "react-native-paper";
 import { moderateScale } from "../utils/fontScaling";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import StarRating from "react-native-star-rating-widget";
+import { DatePickerModal } from "react-native-paper-dates";
 import { Ionicons } from "@expo/vector-icons";
 
 function generateRandomId(partsCount: number = 5, charactersCount: number = 5) {
@@ -31,6 +32,8 @@ function generateRandomId(partsCount: number = 5, charactersCount: number = 5) {
 export const AdminFoodFeedback = () => {
   const dispatch = useDispatch<any>();
   const [feeds, setFeeds] = useState([]);
+  const [date, setDate] = useState(new Date());
+  const [open, setOpen] = useState(false);
   const { feedbacks, getFeedbackLoading, getFeedbackError } = useAppSelector(
     (state) => state.feedback
   );
@@ -47,6 +50,44 @@ export const AdminFoodFeedback = () => {
       }))
     );
   }, [feedbacks]);
+
+  useEffect(() => {
+    setFeeds(
+      feedbacks.filter((req: any) => {
+        return (
+          `${new Date(req.createdDate).getDate()}/${new Date(
+            req.createdDate
+          ).getMonth()}/${new Date(req.createdDate).getFullYear()}` ===
+          `${new Date(date).getDate()}/${new Date(date).getMonth()}/${new Date(
+            date
+          ).getFullYear()}`
+        );
+      })
+    );
+  }, [feedbacks]);
+
+  useEffect(() => {
+    setFeeds(
+      feedbacks.filter(
+        (req: any) =>
+          `${new Date(req.createdDate).getDate()}/${new Date(
+            req.createdDate
+          ).getMonth()}/${new Date(req.createdDate).getFullYear()}` ===
+          `${new Date(date).getDate()}/${new Date(date).getMonth()}/${new Date(
+            date
+          ).getFullYear()}`
+      )
+    );
+  }, [date]);
+
+  const onDismiss = useCallback(() => {
+    setOpen(false);
+  }, [setOpen]);
+
+  const onConfirm = ({ date }: { date: Date }) => {
+    setOpen(false);
+    setDate(date);
+  };
 
   const updateExpanded = (id: string) => {
     setFeeds(
@@ -119,6 +160,21 @@ export const AdminFoodFeedback = () => {
     <View style={{ flex: 1, backgroundColor: "#fff" }}>
       <AppHeader />
       <View style={{ padding: moderateScale(15) }}>
+        <Button
+          mode="contained"
+          style={{ marginBottom: moderateScale(20) }}
+          onPress={() => setOpen(true)}
+        >
+          Showing For:{" "}
+          {`${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`}
+        </Button>
+        <DatePickerModal
+          locale="en"
+          mode="single"
+          visible={open}
+          onDismiss={onDismiss}
+          onConfirm={onConfirm}
+        />
         <FlatList
           data={feeds}
           showsVerticalScrollIndicator={false}

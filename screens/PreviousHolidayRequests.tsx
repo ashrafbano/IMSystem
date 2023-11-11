@@ -78,7 +78,7 @@ const PreviousHolidayRequests: React.FC<IProps> = ({ navigation, route }) => {
                     letterSpacing: 1.1,
                   }}
                 >
-                  {item.name}
+                  {item.name.split(" ")[0]}
                 </Text>
                 <Text
                   style={{
@@ -116,6 +116,24 @@ const PreviousHolidayRequests: React.FC<IProps> = ({ navigation, route }) => {
                 }}
               >
                 Student phone: {item.userPhone}
+              </Text>
+              <Text
+                style={{
+                  fontFamily: "PoppinsBold",
+                  marginTop: moderateScale(5),
+                  fontSize: moderateScale(13),
+                }}
+              >
+                Start Date: {item.startDate}
+              </Text>
+              <Text
+                style={{
+                  fontFamily: "PoppinsBold",
+                  marginTop: moderateScale(5),
+                  fontSize: moderateScale(13),
+                }}
+              >
+                End Date: {item.endDate}
               </Text>
             </TouchableOpacity>
           )}
